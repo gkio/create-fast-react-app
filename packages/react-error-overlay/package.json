@@ -1,5 +1,5 @@
 {
-  "name": "react-error-overlay",
+  "name": "@gkiora/react-error-overlay",
   "version": "6.0.11",
   "description": "An overlay for displaying stack frames.",
   "main": "lib/index.js",
@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/facebook/create-react-app.git",
+    "url": "https://github.com/gkio/create-fast-react-app.git",
     "directory": "packages/react-error-overlay"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/facebook/create-react-app/issues"
+    "url": "https://github.com/gkio/create-fast-react-app/issues"
   },
   "keywords": [
     "overlay",

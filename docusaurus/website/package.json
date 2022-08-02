@@ -1,6 +1,6 @@
 {
-  "name": "cra-docs",
-  "private": true,
+  "name": "@gkiora/cra-docs",
+  "version": "0.0.1",
   "scripts": {
     "start": "docusaurus start",
     "build": "docusaurus build",
