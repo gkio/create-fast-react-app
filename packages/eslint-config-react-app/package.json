@@ -1,6 +1,6 @@
 {
   "name": "@gkiora/eslint-config-react-app",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "ESLint configuration used by Create React App",
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 {
   "name": "@gkiora/react-app-polyfill",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Polyfills for various browsers including commonly used language features",
   "repository": {
     "type": "git",
