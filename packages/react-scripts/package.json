@@ -77,8 +77,14 @@
     "workbox-webpack-plugin": "^6.4.1"
   },
   "devDependencies": {
+    "@swc/core": "^1.2.222",
+    "@swc/helpers": "^0.4.3",
+    "@swc/jest": "^0.2.22",
+    "crypto-browserify": "^3.12.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "stream-browserify": "^3.0.0",
+    "swc-loader": "^0.2.3"
   },
   "optionalDependencies": {
     "fsevents": "^2.3.2"

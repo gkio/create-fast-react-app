@@ -63,7 +63,11 @@ function getAdditionalModulePaths(options = {}) {
  * @param {*} options
  */
 function getWebpackAliases(options = {}) {
-  const baseUrl = options.baseUrl;
+  const { baseUrl, paths } = options;
+
+  if (!baseUrl && paths) {
+    return paths
+  }
 
   if (!baseUrl) {
     return {};
@@ -74,6 +78,7 @@ function getWebpackAliases(options = {}) {
   if (path.relative(paths.appPath, baseUrlResolved) === '') {
     return {
       src: paths.appSrc,
+      ...paths,
     };
   }
 }
@@ -99,6 +104,70 @@ function getJestAliases(options = {}) {
   }
 }
 
+
+function configPathsRaw(conf) {
+  const confPaths =
+    conf.compilerOptions && conf.compilerOptions.paths
+      ? conf.compilerOptions.paths
+      : {};
+
+  const ext = conf.extends || {};
+  const extPaths =
+    ext.compilerOptions && ext.compilerOptions.paths
+      ? ext.compilerOptions.paths
+      : {};
+
+  if (typeof confPaths !== 'object')
+    {throw Error(
+      `create-react-app:configPathsRaw: compilerOptions.paths must be object`
+    );}
+  if (typeof extPaths !== 'object')
+    {throw Error(
+      `create-react-app:configPathsRaw: compilerOptions.extends->compilerOptions.paths must be object`
+    );}
+
+  return {
+    ...confPaths,
+    ...extPaths,
+  };
+}
+
+function readConfig(conf, configDir) {
+  if (!conf)
+    {throw Error(
+      'create-react-app:readConfig: there is no [ts|js]config file found'
+    );}
+
+  const confdir = path.dirname(configDir);
+  const config = { ...conf };
+
+  const extUrl = conf.extends;
+  const extPath = extUrl ? path.resolve(confdir, extUrl) : '';
+  config.extends = extUrl ? require(extPath) : {};
+
+  const resolve = path.resolve
+  
+  const pathsRaw = configPathsRaw(config);
+
+  const aliasMap = Object.keys(pathsRaw).reduce((a, path) => {
+    const value = pathsRaw[path];
+    const target = Array.isArray(value) ? value[0] : value;
+    a[path.replace(/\/\*$/, '')] = resolve(paths.appPath, target.replace(/\/\*$/, ''));
+    return a;
+  }, {});
+
+  return {
+    ...config,
+    compilerOptions: {
+      ...config.compilerOptions,
+      paths: {
+        ...config.compilerOptions.paths,
+        ...aliasMap
+      },
+    },
+  };
+}
+
 function getModules() {
   // Check if TypeScript is setup
   const hasTsConfig = fs.existsSync(paths.appTsConfig);
@@ -120,13 +189,24 @@ function getModules() {
       basedir: paths.appNodeModules,
     }));
     config = ts.readConfigFile(paths.appTsConfig, ts.sys.readFile).config;
+    const hasExtends = config.extends;
+
+    if (hasExtends) {
+      config = readConfig(config, paths.appTsConfig);
+    }
     // Otherwise we'll check if there is jsconfig.json
     // for non TS projects.
   } else if (hasJsConfig) {
     config = require(paths.appJsConfig);
+    const hasExtends = config.extends;
+
+    if (hasExtends) {
+      config = readConfig(config, paths.appJsConfig);
+    }
   }
 
   config = config || {};
+
   const options = config.compilerOptions || {};
 
   const additionalModulePaths = getAdditionalModulePaths(options);
